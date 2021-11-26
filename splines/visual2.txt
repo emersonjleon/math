@@ -1,0 +1,74 @@
+            //AGREGAR A LA ESCENA LOS DIFERENTES ELEMENTOS
+
+            scene.add(pasillo);
+            scene.add(p1);
+            scene.add(p2);
+            scene.add(p3);
+            scene.add(p4);
+            scene.add(p5);
+            scene.add(pb1);
+            scene.add(pb2);
+            scene.add(pbf);
+            scene.add(piso);
+            scene.add(manubrio);
+            scene.add(nina1);
+            scene.add(nina2);
+            scene.add(b1);
+            scene.add(b2);
+            scene.add(coso);
+            scene.add(coso2);
+            scene.add(coso3);
+            scene.add(coso4);
+            scene.add(coso5);
+            scene.add(coso5b);
+            scene.add(coso6);
+            scene.add(coso7);
+            scene.add(coso8);
+            scene.add(cosa);
+            scene.add(cosa1);
+            scene.add(cosa2);
+            scene.add(cosa2b);
+            scene.add(cosa3);
+
+            scene.add(cosAR);
+            scene.add(cosAR2);
+
+            scene.add(bar);
+            scene.add(bar2);
+            scene.add(bar3);
+            scene.add(bar4);
+            scene.add(bar5);
+            scene.add(bar6);
+            scene.add(bara);
+            scene.add(bara2);
+            scene.add(bara3);
+            scene.add(bara4);
+            scene.add(bara5);
+            scene.add(bara6);
+
+            scene.add(par1);
+            scene.add(par2);
+            scene.add(parfo);
+            //scene.add(nina1);
+
+            camera.position.x = 0;
+            camera.position.y = 1;
+            camera.position.z = 2.7;
+            camera.lookAt(origin);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            render();
+        }
+
+        function render() {
+            renderer.render(scene, camera);
+        }
+    </script>
+<button id='button' style="left:12%; top:75% " onClick="grafosClick() "> <a href="index.html">back</a></button>
+
+</body>
+
+</html>

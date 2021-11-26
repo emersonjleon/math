@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Escena</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="js/three.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+    <script src="js/csg.js"></script>
+    <script src="js/THREE.CSG.js"></script>
+    <script src="js/WebGL.js"></script>
+    <script>
+        if (WEBGL.isWebGLAvailable() === false) {
+
+            document.body.appendChild(WEBGL.getWebGLErrorMessage());
+
+        }
+        var scene, aspect, camera, renderer, controls;
+        init();
+        animate();
+
+        function init() {
+            if (WEBGL.isWebGLAvailable() === false) {
+                document.body.appendChild(WEBGL.getWebGLErrorMessage());
+            }
+            //INICIALIZACIÓN
+            scene = new THREE.Scene();
+            aspect = window.innerWidth / window.innerHeight;
+            camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            //ELEMENTOS COMUNES
+            var size = 60;
+            var arrowSize = 1;
+            var divisions = size;
+            var origin = new THREE.Vector3(0, 0, 0);
+            var x = new THREE.Vector3(1, 0, 0);
+            var y = new THREE.Vector3(0, 1, 0);
+            var z = new THREE.Vector3(0, 0, 1);
+            var color = new THREE.Color(0x231100);
+            var colorV = new THREE.Color(0x5b3952);
+            var colorTinto = new THREE.Color(0x5b0000);
+            var colorM = new THREE.Color(0xdedede);
+            var colorB = new THREE.Color(0xffffff);
+            //  var colorPa = new THREE.Color(0xfccd6f);
+            var colorPa = new THREE.Color(0xfcb16f);
+            //var colorPa = new THREE.Color(0xf1f1f1);
+
+            //CREAR LAS GRILLAS PARA EL ESCENARIO
+            var axesHelper = new THREE.AxesHelper(arrowSize);
+            scene.add(axesHelper);
+
+            var gridHelperXZ = new THREE.GridHelper(size, divisions, color, color);
+            scene.add(gridHelperXZ);
+
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXZ.rotateOnWorldAxis(y, THREE.Math.degToRad(90));
+
+            //CREAR ILUMINACIÓN
+            var ambient = new THREE.AmbientLight(0xfdecaa, 0.4);
+            scene.add(ambient);
+
+            var pointLight = new THREE.PointLight(0xffffbb, 1, 50);
+            pointLight.position.set(0, 10, -10);
+            scene.add(pointLight);
+
+            var pointLight2 = new THREE.PointLight(0xffffbb, 1, 50);
+            pointLight2.position.set(0, 10, 40);
+            scene.add(pointLight2);
+
+            var pointLight3 = new THREE.PointLight(0xffffbb, 1, 50);
+            pointLight3.position.set(0, 10, 95);
+            scene.add(pointLight3);
+
+            var pointLight4 = new THREE.PointLight(0xffffff, 2.5, 10);
+            pointLight4.position.set(0, -8, 94);
+            scene.add(pointLight4);
+
+
+
+
+            //CREAR LAS GEOMETRIAS
+            var boxGeometry = new THREE.BoxGeometry(30, 40, 200);
+            var boxGeometry2 = new THREE.BoxGeometry(28, 38, 200);
+            var plano = new THREE.PlaneGeometry(9, 30);
+            var plano2 = new THREE.PlaneGeometry(198, 4);
+            var plano3 = new THREE.PlaneGeometry(38, 4);
+            var planop = new THREE.PlaneGeometry(28, 198);
+            var planoPar = new THREE.PlaneGeometry(40, 200);
+            var planoFond = new THREE.PlaneGeometry(28, 33);
+            var sphereGeometry = new THREE.SphereGeometry(2.5, 25, 25);
+            var cylinderGeometry = new THREE.CylinderGeometry(2.5, 2.5, 8, 25);
+            var bombiGeometry = new THREE.SphereGeometry(1.5, 15, 15);
+            var puGeometry = new THREE.BoxGeometry(1, 30, 1);
+            var pu2Geometry = new THREE.BoxGeometry(1, 1, 10);
+            var puAGeometry = new THREE.BoxGeometry(6, 6, 200);
+            var puBGeometry = new THREE.BoxGeometry(5, 38, 6);
+            var puBPGeometry = new THREE.BoxGeometry(5.1, 4, 6.1);
+
+            var mycylinder = new THREE.CylinderGeometry(4, 5, 5, 30);
+            
+
+
+            //CREAR LOS MATERIALES
+            var materialPare = new THREE.MeshStandardMaterial({
+                color: colorB,
+                metalness: 0,
+                roughness: 0.8,
+
+            });
+            var materialPuertas = new THREE.MeshStandardMaterial({
+                color: colorPa,
+                metalness: 0,
+                roughness: 0.2,
+            });
+
+            var materialPiso = new THREE.MeshStandardMaterial({
+                color: colorTinto,
+                metalness: 0.3,
+                roughness: 0,
+            });
+            var metal = new THREE.MeshStandardMaterial({
+                color: colorM,
+                metalness: 0.8,
+                roughness: 0.5,
+
+            });
+            var Matninas = new THREE.MeshStandardMaterial({
+                color: colorV,
+                metalness: 0,
+                roughness: 0,
+                transparent: true,
+                opacity: 0.9
+            });
+            var Matnew = new THREE.MeshStandardMaterial({
+                color: colorTinto,
+                metalness: 0.3,
+                roughness: 0,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            var materialbomb = new THREE.MeshBasicMaterial({
+                color: 0xffffaa
+            });
+
+            //TEXTURAS
+
+            var woodBase = new THREE.TextureLoader().load('textures/ColorMad.jpg');
+            var woodNormal = new THREE.TextureLoader().load('textures/NormalMad.jpg');
+            var woodMaterial = new THREE.MeshStandardMaterial({
+                map: woodBase,
+                normalMap: woodNormal
+            });
+
+            var patBase = new THREE.TextureLoader().load('textures/ColorPat.jpg');
+            var patNormal = new THREE.TextureLoader().load('textures/NormalPat.jpg');
+            var materialPared = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                roughness: 0.8,
+                transparent: true,
+                opacity: 0.8,
+                map: patBase,
+                normalMap: patNormal
+            });
+            //EXP MIO
+
+            var box1 = new THREE.Mesh(boxGeometry);
+            var box2 = new THREE.Mesh(boxGeometry2);
+            box2.position.z = 1;
+            var box1CSG = THREE.CSG.fromMesh(box1);
+            var box2CSG = THREE.CSG.fromMesh(box2);
+            var result = box1CSG.subtract(box2CSG);
+            var pasillo = THREE.CSG.toMesh(result);
+            pasillo.material = materialPare;
+
+            var p1 = new THREE.Mesh(plano, materialPuertas);
+            p1.rotateY(1.5708);
+            p1.position.x = -13.8;
+            p1.position.y = -5;
+            p1.position.z = 90;
+
+            var p2 = new THREE.Mesh(plano, materialPuertas);
+            p2.rotateY(1.5708);
+            p2.position.x = -13.8;
+            p2.position.y = -5;
+            p2.position.z = 40;
+
+            var p3 = new THREE.Mesh(plano, materialPuertas);
+            p3.rotateY(-1.5708);
+            p3.position.x = 13.8;
+            p3.position.y = -5;
+            p3.position.z = 95;
+
+            var p5 = new THREE.Mesh(plano, materialPuertas);
+            p5.rotateY(-1.5708);
+            p5.position.x = 13.8;
+            p5.position.y = -5;
+            p5.position.z = 85;
+
+            var p4 = new THREE.Mesh(plano, materialPuertas);
+            p4.rotateY(-1.5708);
+            p4.position.x = 13.8;
+            p4.position.y = -5;
+            p4.position.z = 40;
+
+            var pb1 = new THREE.Mesh(plano2, materialPuertas);
+            pb1.rotateY(-1.5708);
+            pb1.position.x = 13.8;
+            pb1.position.y = -17;
+            pb1.position.z = 2;
+
+            var pb2 = new THREE.Mesh(plano2, materialPuertas);
+            pb2.rotateY(1.5708);
+            pb2.position.x = -13.8;
+            pb2.position.y = -17;
+            pb2.position.z = 2;
+
+            var pbf = new THREE.Mesh(plano3, materialPuertas);
+            pbf.position.y = -17;
+            pbf.position.z = -98.8;
+
+            var piso = new THREE.Mesh(planop, Matninas);
+            piso.rotateX(-1.5708);
+            piso.position.y = -18.9;
+            piso.position.z = 2;
+
+            var par1 = new THREE.Mesh(planoPar, materialPared);
+            par1.rotateY(-1.5708);
+            par1.rotateZ(-1.5708);
+            par1.position.x = 13.9;
+
+            var par2 = new THREE.Mesh(planoPar, materialPared);
+            par2.rotateY(1.5708);
+            par2.rotateZ(-1.5708);
+            par2.position.x = -13.9;
+
+            var parfo = new THREE.Mesh(planoFond, materialPared);
+            parfo.position.z = -98.9;
+
+
+            var coso = new THREE.Mesh(puGeometry, materialPuertas);
+            coso.position.z = 85;
+            coso.position.x = -13.9;
+            coso.position.y = -4;
+            var coso2 = new THREE.Mesh(puGeometry, materialPuertas);
+            coso2.position.z = 95;
+            coso2.position.x = -13.9;
+            coso2.position.y = -4;
+            var coso3 = new THREE.Mesh(puGeometry, materialPuertas);
+            coso3.position.z = 35;
+            coso3.position.x = -13.9;
+            coso3.position.y = -4;
+            var coso4 = new THREE.Mesh(puGeometry, materialPuertas);
+            coso4.position.z = 45;
+            coso4.position.x = -13.9;
+            coso4.position.y = -4;
+
+            var coso5 = new THREE.Mesh(puGeometry, materialPuertas);
+            coso5.position.z = 90;
+            coso5.position.x = 13.9;
+            coso5.position.y = -4;
+            var coso5b = new THREE.Mesh(puGeometry, materialPuertas);
+            coso5b.position.z = 80;
+            coso5b.position.x = 13.9;
+            coso5b.position.y = -4;
+            var coso6 = new THREE.Mesh(puGeometry, materialPuertas);
+            coso6.position.z = 100;
+            coso6.position.x = 13.9;
+            coso6.position.y = -4;
+            var coso7 = new THREE.Mesh(puGeometry, materialPuertas);
+            coso7.position.z = 35;
+            coso7.position.x = 13.9;
+            coso7.position.y = -4;
+            var coso8 = new THREE.Mesh(puGeometry, materialPuertas);
+            coso8.position.z = 45;
+            coso8.position.x = 13.9;
+            coso8.position.y = -4;
+
+            var cosa = new THREE.Mesh(pu2Geometry, materialPuertas);
+            cosa.position.z = 90;
+            cosa.position.x = -13.9;
+            cosa.position.y = 10.5;
+
+            var cosa1 = new THREE.Mesh(pu2Geometry, materialPuertas);
+            cosa1.position.z = 40;
+            cosa1.position.x = -13.9;
+            cosa1.position.y = 10.5;
+            var cosa2 = new THREE.Mesh(pu2Geometry, materialPuertas);
+            cosa2.position.z = 95;
+            cosa2.position.x = 13.9;
+            cosa2.position.y = 10.5;
+            var cosa2b = new THREE.Mesh(pu2Geometry, materialPuertas);
+            cosa2b.position.z = 85;
+            cosa2b.position.x = 13.9;
+            cosa2b.position.y = 10.5;
+            var cosa3 = new THREE.Mesh(pu2Geometry, materialPuertas);
+            cosa3.position.z = 40;
+            cosa3.position.x = 13.9;
+            cosa3.position.y = 10.5;
+
+            var cosAR = new THREE.Mesh(puAGeometry, materialPare);
+            cosAR.position.x = 13.9;
+            cosAR.position.y = 19;
+
+            var cosAR2 = new THREE.Mesh(puAGeometry, materialPare);
+            cosAR2.position.x = -13.9;
+            cosAR2.position.y = 19;
+
+
+            var bar = new THREE.Mesh(puBGeometry, materialPared);
+            bar.position.z = 65;
+            bar.position.x = -13.9;
+            bar.position.y = -2;
+
+            var bar2 = new THREE.Mesh(puBGeometry, materialPared);
+            bar2.position.z = 70;
+            bar2.position.x = 13.9;
+            bar2.position.y = -2;
+
+            var bar3 = new THREE.Mesh(puBGeometry, materialPared);
+            bar3.position.z = 25;
+            bar3.position.x = -13.9;
+            bar3.position.y = -2;
+
+            var bar4 = new THREE.Mesh(puBGeometry, materialPared);
+            bar4.position.z = 0;
+            bar4.position.x = -13.9;
+            bar4.position.y = -2;
+
+            var bar5 = new THREE.Mesh(puBGeometry, materialPared);
+            bar5.position.z = 10;
+            bar5.position.x = 13.9;
+            bar5.position.y = -2;
+
+            var bar6 = new THREE.Mesh(puBGeometry, materialPared);
+            bar6.position.z = -30;
+            bar6.position.x = 13.9;
+            bar6.position.y = -2;
+
+            var bara = new THREE.Mesh(puBPGeometry, materialPuertas);
+            bara.position.z = 65;
+            bara.position.x = -13.9;
+            bara.position.y = -17;
+
+            var bara2 = new THREE.Mesh(puBPGeometry, materialPuertas);
+            bara2.position.z = 70;
+            bara2.position.x = 13.9;
+            bara2.position.y = -17;
+
+            var bara3 = new THREE.Mesh(puBPGeometry, materialPuertas);
+            bara3.position.z = 25;
+            bara3.position.x = -13.9;
+            bara3.position.y = -17;
+
+            var bara4 = new THREE.Mesh(puBPGeometry, materialPuertas);
+            bara4.position.z = 0;
+            bara4.position.x = -13.9;
+            bara4.position.y = -17;
+
+            var bara5 = new THREE.Mesh(puBPGeometry, materialPuertas);
+            bara5.position.z = 10;
+            bara5.position.x = 13.9;
+            bara5.position.y = -17;
+
+            var bara6 = new THREE.Mesh(puBPGeometry, materialPuertas);
+            bara6.position.z = -30;
+            bara6.position.x = 13.9;
+            bara6.position.y = -17;
+
+            //Bombillos
+            var b1 = new THREE.Mesh(bombiGeometry, materialbomb);
+            b1.position.z = -10;
+            b1.position.y = 13;
+            var b2 = new THREE.Mesh(bombiGeometry, materialbomb);
+            b2.position.z = 40;
+            b2.position.y = 13;
+
+            var curve2D = new THREE.SplineCurve([
+                new THREE.Vector2(0, 20),
+                new THREE.Vector2(0, 13),
+            ]);
+
+            var material = new THREE.LineBasicMaterial({
+                color: 0x593d25
+            });
+            var resolution = 150;
+            var points = curve2D.getPoints(resolution);
+            var geometry = new THREE.BufferGeometry().setFromPoints(points);
+            var bc1 = new THREE.Line(geometry, material);
+            bc1.position.z = -10;
+            var bc2 = new THREE.Line(geometry, material);
+            bc2.position.z = 40;
+            scene.add(bc1);
+            scene.add(bc2);
+
+            var curveC1 = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-5, -10, 92),
+                new THREE.Vector3(-3, -8, 95),
+                new THREE.Vector3(0, -13, 95),
+                new THREE.Vector3(3, -8, 92),
+                new THREE.Vector3(5, -10, 92)
+
+            ])
+
+            var extrudeSettings = {
+                steps: 200,
+                bevelEnabled: false,
+                extrudePath: curveC1
+            };
+
+
+            var pts = [],
+                count = 70;
+
+            for (var i = 0; i < count; i++) {
+
+                var l = 0.3;
+
+                var a = 2 * i / count * Math.PI;
+
+                pts.push(new THREE.Vector4(Math.cos(a) * l, Math.sin(a) * l));
+
+            }
+
+            var shape = new THREE.Shape(pts);
+
+            var geoMan = new THREE.ExtrudeBufferGeometry(shape, extrudeSettings);
+            var manubrio = new THREE.Mesh(geoMan, metal);
+
+
+
+            //NInAS
+            var cilin = new THREE.Mesh(cylinderGeometry);
+            var esfe = new THREE.Mesh(sphereGeometry);
+            esfe.position.y = 3.5;
+
+            var cabeza = THREE.CSG.fromMesh(esfe);
+            var cuerpi = THREE.CSG.fromMesh(cilin);
+            var result = cabeza.union(cuerpi);
+            var nina1 = THREE.CSG.toMesh(result);
+            var nina2 = THREE.CSG.toMesh(result);
+            nina1.position.x = -4;
+            nina2.position.x = 4;
+            nina1.position.y = -12;
+            nina2.position.y = -12;
+            nina1.position.z = -30;
+            nina2.position.z = -30;
+            nina1.material = Matninas;
+            nina2.material = Matninas;
+
+
+           
+            yellowmaterial= new THREE.MeshBasicMaterial({ 
+                color: 0xaaaa00 , 
+                side: THREE.DoubleSide, 
+                transparent: true,
+                opacity: 0.7
+            });
+
+            orangematerial= new THREE.MeshBasicMaterial({ 
+                color: 0xbb7700 , 
+                side: THREE.DoubleSide, 
+                transparent: true,
+                opacity: 0.7
+            });
+
+            var geometry = new THREE.Geometry();
+            geometry.faces= [
+                new THREE.Face3(0, 1, 2),
+                new THREE.Face3(1, 3, 4),
+                new THREE.Face3(2, 4, 5),
+                new THREE.Face3(3, 6, 7),
+                new THREE.Face3(4, 7, 8),
+                new THREE.Face3(5, 8, 9),
+                new THREE.Face3(6, 10, 11),
+                new THREE.Face3(7, 11, 12),
+                new THREE.Face3(8, 12, 13),
+                new THREE.Face3(9, 13, 14),
+                new THREE.Face3(10, 15, 16),
+                new THREE.Face3(11, 16, 17),
+                new THREE.Face3(12, 17, 18),
+                new THREE.Face3(13, 18, 19),
+                new THREE.Face3(14, 19, 20),
+                new THREE.Face3(15, 21, 22),
+                new THREE.Face3(16, 22, 23),
+                new THREE.Face3(17, 23, 24),
+                new THREE.Face3(18, 24, 25),
+                new THREE.Face3(19, 25, 26),
+                new THREE.Face3(20, 26, 27),
+                new THREE.Face3(21, 28, 29),
+                new THREE.Face3(22, 29, 30),
+                new THREE.Face3(23, 30, 31),
+                new THREE.Face3(24, 31, 32),
+                new THREE.Face3(25, 32, 33),
+                new THREE.Face3(26, 33, 34),
+                new THREE.Face3(27, 34, 35),
+                new THREE.Face3(28, 36, 37),
+                new THREE.Face3(29, 37, 38),
+                new THREE.Face3(30, 38, 39),
+                new THREE.Face3(31, 39, 40),
+                new THREE.Face3(32, 40, 41),
+                new THREE.Face3(33, 41, 42),
+                new THREE.Face3(34, 42, 43),
+                new THREE.Face3(35, 43, 44),
+                new THREE.Face3(36, 45, 46),
+                new THREE.Face3(37, 46, 47),
+                new THREE.Face3(38, 47, 48),
+                new THREE.Face3(39, 48, 49),
+                new THREE.Face3(40, 49, 50),
+                new THREE.Face3(41, 50, 51),
+                new THREE.Face3(42, 51, 52),
+                new THREE.Face3(43, 52, 53),
+                new THREE.Face3(44, 53, 54),
+                new THREE.Face3(45, 55, 56),
+                new THREE.Face3(46, 56, 57),
+                new THREE.Face3(47, 57, 58),
+                new THREE.Face3(48, 58, 59),
+                new THREE.Face3(49, 59, 60),
+                new THREE.Face3(50, 60, 61),
+                new THREE.Face3(51, 61, 62),
+                new THREE.Face3(52, 62, 63),
+                new THREE.Face3(53, 63, 64),
+                new THREE.Face3(54, 64, 65),
+                new THREE.Face3(55, 66, 67),
+                new THREE.Face3(56, 67, 68),
+                new THREE.Face3(57, 68, 69),
+                new THREE.Face3(58, 69, 70),
+                new THREE.Face3(59, 70, 71),
+                new THREE.Face3(60, 71, 72),
+                new THREE.Face3(61, 72, 73),
+                new THREE.Face3(62, 73, 74),
+                new THREE.Face3(63, 74, 75),
+                new THREE.Face3(64, 75, 76),
+                new THREE.Face3(65, 76, 77),
+                new THREE.Face3(66, 78, 79),
+                new THREE.Face3(67, 79, 80),
+                new THREE.Face3(68, 80, 81),
+                new THREE.Face3(69, 81, 82),
+                new THREE.Face3(70, 82, 83),
+                new THREE.Face3(71, 83, 84),
+                new THREE.Face3(72, 84, 85),
+                new THREE.Face3(73, 85, 86),
+                new THREE.Face3(74, 86, 87),
+                new THREE.Face3(75, 87, 88),
+                new THREE.Face3(76, 88, 89),
+                new THREE.Face3(77, 89, 90),
+                new THREE.Face3(78, 91, 92),
+                new THREE.Face3(79, 92, 93),
+                new THREE.Face3(80, 93, 94),
+                new THREE.Face3(81, 94, 95),
+                new THREE.Face3(82, 95, 96),
+                new THREE.Face3(83, 96, 97),
+                new THREE.Face3(84, 97, 98),
+                new THREE.Face3(85, 98, 99),
+                new THREE.Face3(86, 99, 100),
+                new THREE.Face3(87, 100, 101),
+                new THREE.Face3(88, 101, 102),
+                new THREE.Face3(89, 102, 103),
+                new THREE.Face3(90, 103, 104),
+                new THREE.Face3(91, 105, 106),
+                new THREE.Face3(92, 106, 107),
+                new THREE.Face3(93, 107, 108),
+                new THREE.Face3(94, 108, 109),
+                new THREE.Face3(95, 109, 110),
+                new THREE.Face3(96, 110, 111),
+                new THREE.Face3(97, 111, 112),
+                new THREE.Face3(98, 112, 113),
+                new THREE.Face3(99, 113, 114),
+                new THREE.Face3(100, 114, 115),
+                new THREE.Face3(101, 115, 116),
+                new THREE.Face3(102, 116, 117),
+                new THREE.Face3(103, 117, 118),
+                new THREE.Face3(104, 118, 119),
+                new THREE.Face3(105, 120, 121),
+                new THREE.Face3(106, 121, 122),
+                new THREE.Face3(107, 122, 123),
+                new THREE.Face3(108, 123, 124),
+                new THREE.Face3(109, 124, 125),
+                new THREE.Face3(110, 125, 126),
+                new THREE.Face3(111, 126, 127),
+                new THREE.Face3(112, 127, 128),
+                new THREE.Face3(113, 128, 129),
+                new THREE.Face3(114, 129, 130),
+                new THREE.Face3(115, 130, 131),
+                new THREE.Face3(116, 131, 132),
+                new THREE.Face3(117, 132, 133),
+                new THREE.Face3(118, 133, 134),
+                new THREE.Face3(119, 134, 135),
+                new THREE.Face3(120, 136, 137),
+                new THREE.Face3(121, 137, 138),
+                new THREE.Face3(122, 138, 139),
+                new THREE.Face3(123, 139, 140),
+                new THREE.Face3(124, 140, 141),
+                new THREE.Face3(125, 141, 142),
+                new THREE.Face3(126, 142, 143),
+                new THREE.Face3(127, 143, 144),
+                new THREE.Face3(128, 144, 145),
+                new THREE.Face3(129, 145, 146),
+                new THREE.Face3(130, 146, 147),
+                new THREE.Face3(131, 147, 148),
+                new THREE.Face3(132, 148, 149),
+                new THREE.Face3(133, 149, 150),
+                new THREE.Face3(134, 150, 151),
+                new THREE.Face3(135, 151, 152),
+                new THREE.Face3(136, 153, 154),
+                new THREE.Face3(137, 154, 155),
+                new THREE.Face3(138, 155, 156),
+                new THREE.Face3(139, 156, 157),
+                new THREE.Face3(140, 157, 158),
+                new THREE.Face3(141, 158, 159),
+                new THREE.Face3(142, 159, 160),
+                new THREE.Face3(143, 160, 161),
+                new THREE.Face3(144, 161, 162),
+                new THREE.Face3(145, 162, 163),
+                new THREE.Face3(146, 163, 164),
+                new THREE.Face3(147, 164, 165),
+                new THREE.Face3(148, 165, 166),
+                new THREE.Face3(149, 166, 167),
+                new THREE.Face3(150, 167, 168),
+                new THREE.Face3(151, 168, 169),
+                new THREE.Face3(152, 169, 170),
+                new THREE.Face3(153, 171, 172),
+                new THREE.Face3(154, 172, 173),
+                new THREE.Face3(155, 173, 174),
+                new THREE.Face3(156, 174, 175),
+                new THREE.Face3(157, 175, 176),
+                new THREE.Face3(158, 176, 177),
+                new THREE.Face3(159, 177, 178),
+                new THREE.Face3(160, 178, 179),
+                new THREE.Face3(161, 179, 180),
+                new THREE.Face3(162, 180, 181),
+                new THREE.Face3(163, 181, 182),
+                new THREE.Face3(164, 182, 183),
+                new THREE.Face3(165, 183, 184),
+                new THREE.Face3(166, 184, 185),
+                new THREE.Face3(167, 185, 186),
+                new THREE.Face3(168, 186, 187),
+                new THREE.Face3(169, 187, 188),
+                new THREE.Face3(170, 188, 189),
+                new THREE.Face3(171, 190, 191),
+                new THREE.Face3(172, 191, 192),
+                new THREE.Face3(173, 192, 193),
+                new THREE.Face3(174, 193, 194),
+                new THREE.Face3(175, 194, 195),
+                new THREE.Face3(176, 195, 196),
+                new THREE.Face3(177, 196, 197),
+                new THREE.Face3(178, 197, 198),
+                new THREE.Face3(179, 198, 199),
+                new THREE.Face3(180, 199, 200),
+                new THREE.Face3(181, 200, 201),
+                new THREE.Face3(182, 201, 202),
+                new THREE.Face3(183, 202, 203),
+                new THREE.Face3(184, 203, 204),
+                new THREE.Face3(185, 204, 205),
+                new THREE.Face3(186, 205, 206),
+                new THREE.Face3(187, 206, 207),
+                new THREE.Face3(188, 207, 208),
+                new THREE.Face3(189, 208, 209),
+                new THREE.Face3(190, 210, 211),
+                new THREE.Face3(191, 211, 212),
+                new THREE.Face3(192, 212, 213),
+                new THREE.Face3(193, 213, 214),
+                new THREE.Face3(194, 214, 215),
+                new THREE.Face3(195, 215, 216),
+                new THREE.Face3(196, 216, 217),
+                new THREE.Face3(197, 217, 218),
+                new THREE.Face3(198, 218, 219),
+                new THREE.Face3(199, 219, 220),
+                new THREE.Face3(200, 220, 221),
+                new THREE.Face3(201, 221, 222),
+                new THREE.Face3(202, 222, 223),
+                new THREE.Face3(203, 223, 224),
+                new THREE.Face3(204, 224, 225),
+                new THREE.Face3(205, 225, 226),
+                new THREE.Face3(206, 226, 227),
+                new THREE.Face3(207, 227, 228),
+                new THREE.Face3(208, 228, 229),
+                new THREE.Face3(209, 229, 230),
+                new THREE.Face3(210, 231, 232),
+                new THREE.Face3(211, 232, 233),
+                new THREE.Face3(212, 233, 234),
+                new THREE.Face3(213, 234, 235),
+                new THREE.Face3(214, 235, 236),
+                new THREE.Face3(215, 236, 237),
+                new THREE.Face3(216, 237, 238),
+                new THREE.Face3(217, 238, 239),
+                new THREE.Face3(218, 239, 240),
+                new THREE.Face3(219, 240, 241),
+                new THREE.Face3(220, 241, 242),
+                new THREE.Face3(221, 242, 243),
+                new THREE.Face3(222, 243, 244),
+                new THREE.Face3(223, 244, 245),
+                new THREE.Face3(224, 245, 246),
+                new THREE.Face3(225, 246, 247),
+                new THREE.Face3(226, 247, 248),
+                new THREE.Face3(227, 248, 249),
+                new THREE.Face3(228, 249, 250),
+                new THREE.Face3(229, 250, 251),
+                new THREE.Face3(230, 251, 252),
+                new THREE.Face3(231, 253, 254),
+                new THREE.Face3(232, 254, 255),
+                new THREE.Face3(233, 255, 256),
+                new THREE.Face3(234, 256, 257),
+                new THREE.Face3(235, 257, 258),
+                new THREE.Face3(236, 258, 259),
+                new THREE.Face3(237, 259, 260),
+                new THREE.Face3(238, 260, 261),
+                new THREE.Face3(239, 261, 262),
+                new THREE.Face3(240, 262, 263),
+                new THREE.Face3(241, 263, 264),
+                new THREE.Face3(242, 264, 265),
+                new THREE.Face3(243, 265, 266),
+                new THREE.Face3(244, 266, 267),
+                new THREE.Face3(245, 267, 268),
+                new THREE.Face3(246, 268, 269),
+                new THREE.Face3(247, 269, 270),
+                new THREE.Face3(248, 270, 271),
+                new THREE.Face3(249, 271, 272),
+                new THREE.Face3(250, 272, 273),
+                new THREE.Face3(251, 273, 274),
+                new THREE.Face3(252, 274, 275),
+                new THREE.Face3(253, 276, 277),
+                new THREE.Face3(254, 277, 278),
+                new THREE.Face3(255, 278, 279),
+                new THREE.Face3(256, 279, 280),
+                new THREE.Face3(257, 280, 281),
+                new THREE.Face3(258, 281, 282),
+                new THREE.Face3(259, 282, 283),
+                new THREE.Face3(260, 283, 284),
+                new THREE.Face3(261, 284, 285),
+                new THREE.Face3(262, 285, 286),
+                new THREE.Face3(263, 286, 287),
+                new THREE.Face3(264, 287, 288),
+                new THREE.Face3(265, 288, 289),
+                new THREE.Face3(266, 289, 290),
+                new THREE.Face3(267, 290, 291),
+                new THREE.Face3(268, 291, 292),
+                new THREE.Face3(269, 292, 293),
+                new THREE.Face3(270, 293, 294),
+                new THREE.Face3(271, 294, 295),
+                new THREE.Face3(272, 295, 296),
+                new THREE.Face3(273, 296, 297),
+                new THREE.Face3(274, 297, 298),
+                new THREE.Face3(275, 298, 299),
+                new THREE.Face3(276, 300, 301),
+                new THREE.Face3(277, 301, 302),
+                new THREE.Face3(278, 302, 303),
+                new THREE.Face3(279, 303, 304),
+                new THREE.Face3(280, 304, 305),
+                new THREE.Face3(281, 305, 306),
+                new THREE.Face3(282, 306, 307),
+                new THREE.Face3(283, 307, 308),
+                new THREE.Face3(284, 308, 309),
+                new THREE.Face3(285, 309, 310),
+                new THREE.Face3(286, 310, 311),
+                new THREE.Face3(287, 311, 312),
+                new THREE.Face3(288, 312, 313),
+                new THREE.Face3(289, 313, 314),
+                new THREE.Face3(290, 314, 315),
+                new THREE.Face3(291, 315, 316),
+                new THREE.Face3(292, 316, 317),
+                new THREE.Face3(293, 317, 318),
+                new THREE.Face3(294, 318, 319),
+                new THREE.Face3(295, 319, 320),
+                new THREE.Face3(296, 320, 321),
+                new THREE.Face3(297, 321, 322),
+                new THREE.Face3(298, 322, 323),
+                new THREE.Face3(299, 323, 324),
+                new THREE.Face3(300, 325, 326),
+                new THREE.Face3(301, 326, 327),
+                new THREE.Face3(302, 327, 328),
+                new THREE.Face3(303, 328, 329),
+                new THREE.Face3(304, 329, 330),
+                new THREE.Face3(305, 330, 331),
+                new THREE.Face3(306, 331, 332),
+                new THREE.Face3(307, 332, 333),
+                new THREE.Face3(308, 333, 334),
+                new THREE.Face3(309, 334, 335),
+                new THREE.Face3(310, 335, 336),
+                new THREE.Face3(311, 336, 337),
+                new THREE.Face3(312, 337, 338),
+                new THREE.Face3(313, 338, 339),
+                new THREE.Face3(314, 339, 340),
+                new THREE.Face3(315, 340, 341),
+                new THREE.Face3(316, 341, 342),
+                new THREE.Face3(317, 342, 343),
+                new THREE.Face3(318, 343, 344),
+                new THREE.Face3(319, 344, 345),
+                new THREE.Face3(320, 345, 346),
+                new THREE.Face3(321, 346, 347),
+                new THREE.Face3(322, 347, 348),
+                new THREE.Face3(323, 348, 349),
+                new THREE.Face3(324, 349, 350),
+                new THREE.Face3(325, 351, 352),
+                new THREE.Face3(326, 352, 353),
+                new THREE.Face3(327, 353, 354),
+                new THREE.Face3(328, 354, 355),
+                new THREE.Face3(329, 355, 356),
+                new THREE.Face3(330, 356, 357),
+                new THREE.Face3(331, 357, 358),
+                new THREE.Face3(332, 358, 359),
+                new THREE.Face3(333, 359, 360),
+                new THREE.Face3(334, 360, 361),
+                new THREE.Face3(335, 361, 362),
+                new THREE.Face3(336, 362, 363),
+                new THREE.Face3(337, 363, 364),
+                new THREE.Face3(338, 364, 365),
+                new THREE.Face3(339, 365, 366),
+                new THREE.Face3(340, 366, 367),
+                new THREE.Face3(341, 367, 368),
+                new THREE.Face3(342, 368, 369),
+                new THREE.Face3(343, 369, 370),
+                new THREE.Face3(344, 370, 371),
+                new THREE.Face3(345, 371, 372),
+                new THREE.Face3(346, 372, 373),
+                new THREE.Face3(347, 373, 374),
+                new THREE.Face3(348, 374, 375),
+                new THREE.Face3(349, 375, 376),
+                new THREE.Face3(350, 376, 377),
+                new THREE.Face3(351, 378, 379),
+                new THREE.Face3(352, 379, 380),
+                new THREE.Face3(353, 380, 381),
+                new THREE.Face3(354, 381, 382),
+                new THREE.Face3(355, 382, 383),
+                new THREE.Face3(356, 383, 384),
+                new THREE.Face3(357, 384, 385),
+                new THREE.Face3(358, 385, 386),
+                new THREE.Face3(359, 386, 387),
+                new THREE.Face3(360, 387, 388),
+                new THREE.Face3(361, 388, 389),
+                new THREE.Face3(362, 389, 390),
+                new THREE.Face3(363, 390, 391),
+                new THREE.Face3(364, 391, 392),
+                new THREE.Face3(365, 392, 393),
+                new THREE.Face3(366, 393, 394),
+                new THREE.Face3(367, 394, 395),
+                new THREE.Face3(368, 395, 396),
+                new THREE.Face3(369, 396, 397),
+                new THREE.Face3(370, 397, 398),
+                new THREE.Face3(371, 398, 399),
+                new THREE.Face3(372, 399, 400),
+                new THREE.Face3(373, 400, 401),
+                new THREE.Face3(374, 401, 402),
+                new THREE.Face3(375, 402, 403),
+                new THREE.Face3(376, 403, 404),
+                new THREE.Face3(377, 404, 405),
+                new THREE.Face3(378, 406, 407),
+                new THREE.Face3(379, 407, 408),
+                new THREE.Face3(380, 408, 409),
+                new THREE.Face3(381, 409, 410),
+                new THREE.Face3(382, 410, 411),
+                new THREE.Face3(383, 411, 412),
+                new THREE.Face3(384, 412, 413),
+                new THREE.Face3(385, 413, 414),
+                new THREE.Face3(386, 414, 415),
+                new THREE.Face3(387, 415, 416),
+                new THREE.Face3(388, 416, 417),
+                new THREE.Face3(389, 417, 418),
+                new THREE.Face3(390, 418, 419),
+                new THREE.Face3(391, 419, 420),
+                new THREE.Face3(392, 420, 421),
+                new THREE.Face3(393, 421, 422),
+                new THREE.Face3(394, 422, 423),
+                new THREE.Face3(395, 423, 424),
+                new THREE.Face3(396, 424, 425),
+                new THREE.Face3(397, 425, 426),
+                new THREE.Face3(398, 426, 427),
+                new THREE.Face3(399, 427, 428),
+                new THREE.Face3(400, 428, 429),
+                new THREE.Face3(401, 429, 430),
+                new THREE.Face3(402, 430, 431),
+                new THREE.Face3(403, 431, 432),
+                new THREE.Face3(404, 432, 433),
+                new THREE.Face3(405, 433, 434),
+                new THREE.Face3(406, 435, 436),
+                new THREE.Face3(407, 436, 437),
+                new THREE.Face3(408, 437, 438),
+                new THREE.Face3(409, 438, 439),
+                new THREE.Face3(410, 439, 440),
+                new THREE.Face3(411, 440, 441),
+                new THREE.Face3(412, 441, 442),
+                new THREE.Face3(413, 442, 443),
+                new THREE.Face3(414, 443, 444),
+                new THREE.Face3(415, 444, 445),
+                new THREE.Face3(416, 445, 446),
+                new THREE.Face3(417, 446, 447),
+                new THREE.Face3(418, 447, 448),
+                new THREE.Face3(419, 448, 449),
+                new THREE.Face3(420, 449, 450),
+                new THREE.Face3(421, 450, 451),
+                new THREE.Face3(422, 451, 452),
+                new THREE.Face3(423, 452, 453),
+                new THREE.Face3(424, 453, 454),
+                new THREE.Face3(425, 454, 455),
+                new THREE.Face3(426, 455, 456),
+                new THREE.Face3(427, 456, 457),
+                new THREE.Face3(428, 457, 458),
+                new THREE.Face3(429, 458, 459),
+                new THREE.Face3(430, 459, 460),
+                new THREE.Face3(431, 460, 461),
+                new THREE.Face3(432, 461, 462),
+                new THREE.Face3(433, 462, 463),
+                new THREE.Face3(434, 463, 464),
+                new THREE.Face3(435, 465, 466),
+                new THREE.Face3(436, 466, 467),
+                new THREE.Face3(437, 467, 468),
+                new THREE.Face3(438, 468, 469),
+                new THREE.Face3(439, 469, 470),
+                new THREE.Face3(440, 470, 471),
+                new THREE.Face3(441, 471, 472),
+                new THREE.Face3(442, 472, 473),
+                new THREE.Face3(443, 473, 474),
+                new THREE.Face3(444, 474, 475),
+                new THREE.Face3(445, 475, 476),
+                new THREE.Face3(446, 476, 477),
+                new THREE.Face3(447, 477, 478),
+                new THREE.Face3(448, 478, 479),
+                new THREE.Face3(449, 479, 480),
+                new THREE.Face3(450, 480, 481),
+                new THREE.Face3(451, 481, 482),
+                new THREE.Face3(452, 482, 483),
+                new THREE.Face3(453, 483, 484),
+                new THREE.Face3(454, 484, 485),
+                new THREE.Face3(455, 485, 486),
+                new THREE.Face3(456, 486, 487),
+                new THREE.Face3(457, 487, 488),
+                new THREE.Face3(458, 488, 489),
+                new THREE.Face3(459, 489, 490),
+                new THREE.Face3(460, 490, 491),
+                new THREE.Face3(461, 491, 492),
+                new THREE.Face3(462, 492, 493),
+                new THREE.Face3(463, 493, 494),
+                new THREE.Face3(464, 494, 495)
+            ];
+            test
+            test
+            //AGREGAR A LA ESCENA LOS DIFERENTES ELEMENTOS
+
+            scene.add(pasillo);
+            scene.add(p1);
+            scene.add(p2);
+            scene.add(p3);
+            scene.add(p4);
+            scene.add(p5);
+            scene.add(pb1);
+            scene.add(pb2);
+            scene.add(pbf);
+            scene.add(piso);
+            scene.add(manubrio);
+            scene.add(nina1);
+            scene.add(nina2);
+            scene.add(b1);
+            scene.add(b2);
+            scene.add(coso);
+            scene.add(coso2);
+            scene.add(coso3);
+            scene.add(coso4);
+            scene.add(coso5);
+            scene.add(coso5b);
+            scene.add(coso6);
+            scene.add(coso7);
+            scene.add(coso8);
+            scene.add(cosa);
+            scene.add(cosa1);
+            scene.add(cosa2);
+            scene.add(cosa2b);
+            scene.add(cosa3);
+
+            scene.add(cosAR);
+            scene.add(cosAR2);
+
+            scene.add(bar);
+            scene.add(bar2);
+            scene.add(bar3);
+            scene.add(bar4);
+            scene.add(bar5);
+            scene.add(bar6);
+            scene.add(bara);
+            scene.add(bara2);
+            scene.add(bara3);
+            scene.add(bara4);
+            scene.add(bara5);
+            scene.add(bara6);
+
+            scene.add(par1);
+            scene.add(par2);
+            scene.add(parfo);
+            //scene.add(nina1);
+
+            camera.position.x = 0;
+            camera.position.y = 1;
+            camera.position.z = 2.7;
+            camera.lookAt(origin);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            render();
+        }
+
+        function render() {
+            renderer.render(scene, camera);
+        }
+    </script>
+<button id='button' style="left:12%; top:75% " onClick="grafosClick() "> <a href="index.html">back</a></button>
+
+</body>
+
+</html>
