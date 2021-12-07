@@ -478,6 +478,13 @@
                 opacity: 0.7
             });
 
+            redmaterial= new THREE.MeshBasicMaterial({ 
+                color: 0xbb0000 , 
+                side: THREE.DoubleSide, 
+                transparent: true,
+                opacity: 0.7
+            });
+
             bluematerial= new THREE.MeshBasicMaterial({ 
                 color: 0x0022aa , 
                 side: THREE.DoubleSide, 

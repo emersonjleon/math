@@ -59,7 +59,20 @@ def visualize(polytlist,dl,outputfile="./threejs/visual.html"):
     f.close()
 
 
-    
+
+class Scene():
+    """A list of polytriangles to be visualized in js, dl ..."""
+    def __init__(self, polytlist,dl=30,outputfile="./threejs/visual.html"):
+        self.polytlist=polytlist
+        self.dl=dl
+        self.outputfile=outputfile
+    def writehtml(self):
+        visualize(self.polytlist, self.dl, self.outputfile)
+    def addpolyt(self,polyt):
+        self.polytlist.append(polyt)
+        
+        
+
 
    
     ## geometry.vertices= [new THREE.Vector3(2,1,0), new THREE.Vector3(1,3,0), new THREE.Vector3(3,4,0)];
@@ -96,7 +109,7 @@ if __name__=="__main__":
     ps=Polytriangle(d1p,d2p,d0p, (0,1,2) )
     ps.color="orange"
     ps2=Polytriangle(d0p,d1p,d2p, (0,1,2) )
-    ps2.color="blue"
+    ps2.color="orange"
     ps3=Polytriangle(d2p,d0p,d1p, (0,1,2) )
     
     
@@ -113,7 +126,7 @@ if __name__=="__main__":
 
     c1=1
     c2=-1
-    c3=1
+    c3=1.2
     
     bxoct=[1,
            c3,c3,
@@ -137,9 +150,9 @@ if __name__=="__main__":
     
     #octt=Polytriangle(bpoly(bxoct),bpoly(byoct),bpoly(bzoct),(0,1,2))
 
-    #test.color='blue'
+    #test.color='orange'
     octb=Polytriangle(bpoly(bxoct),bpoly(byoct),bpoly(bzoct),(0,1,2))
-    octb.color='blue'
+    
     
     """
     ####
@@ -170,6 +183,11 @@ if __name__=="__main__":
     c1=1; c2=2 
     feels so good, this is maybe what i was looking for. soft, round and with nice proportions. Unfortunately trying to close the sphere, we see that it is not smooth enough... soo bad...
 
+    c1=1
+    c2=-1.4
+    c3=1.4
+    cobra
+
     next time: use adyacent method and see its coefficients
 
     """
@@ -199,10 +217,25 @@ if __name__=="__main__":
         """
         return the negative Poly, taking all coefficients times -1.    
         """
-        return p.Poly([blist[i]*(-1) for i in range(10)])
+        return bpoly([blist[i]*(-1) for i in range(10)])
 
-    octor=Polytriangle(p.Poly(x0p),negpoly(x1p),p.Poly(x2p),(0,1,2))
-    octor.color="orange"
+    #octor=Polytriangle(p.Poly(x0p),negpoly(x1p),p.Poly(x2p),(0,1,2))
+    #octor.color="orange"
 
-    
-    visualize([octb],dl)
+    #octb.color='blue'
+    octb.color='red'
+    octbn=Polytriangle(bpoly(bxoct),negpoly(byoct),bpoly(bzoct),(0,1,2))
+    octbn.color='red'
+    octbn2=Polytriangle(bpoly(bxoct),negpoly(byoct),negpoly(bzoct),(0,1,2))
+    octbn2.color='red'
+    octbn3=Polytriangle(bpoly(bxoct),bpoly(byoct),negpoly(bzoct),(0,1,2))
+    octbn3.color='red'
+    octbn4=Polytriangle(negpoly(bxoct),negpoly(byoct),bpoly(bzoct),(0,1,2))
+    octbn4.color='red'
+    octbn5=Polytriangle(negpoly(bxoct),bpoly(byoct),bpoly(bzoct),(0,1,2))
+    octbn5.color='red'
+    octbn6=Polytriangle(negpoly(bxoct),bpoly(byoct),negpoly(bzoct),(0,1,2))
+    octbn6.color='red'
+    octbn7=Polytriangle(negpoly(bxoct),negpoly(byoct),negpoly(bzoct),(0,1,2))
+    octbn7.color='red'
+    visualize([octb,octbn,octbn2,octbn3,octbn4,octbn5,octbn6,octbn7],dl)
