@@ -121,7 +121,7 @@
                 roughness: 0.8,
 
             });
-            var materialPuertas = new THREE.MeshStandardMaterial({
+            var materialPuert = new THREE.MeshStandardMaterial({
                 color: colorPa,
                 metalness: 0,
                 roughness: 0.2,
@@ -161,7 +161,7 @@
 
             var woodBase = new THREE.TextureLoader().load('textures/ColorMad.jpg');
             var woodNormal = new THREE.TextureLoader().load('textures/NormalMad.jpg');
-            var woodMaterial = new THREE.MeshStandardMaterial({
+            var materialPuertas = new THREE.MeshStandardMaterial({
                 map: woodBase,
                 normalMap: woodNormal
             });
@@ -173,8 +173,8 @@
                 roughness: 0.8,
                 transparent: true,
                 opacity: 0.8,
-                map: patBase,
-                normalMap: patNormal
+                //map: patBase,
+                //normalMap: patNormal
             });
             //EXP MIO
 
